@@ -20,6 +20,10 @@ namespace AzureConstructionsProgressTracker.Common
             var namespaceManager = NamespaceManager.CreateFromConnectionString(_serviceBusNamespaceConnectionString);
 
             //TODO ex3: Create queue if not exists
+            if (!namespaceManager.QueueExists(QueueName))
+            {
+                namespaceManager.CreateQueue(QueueName);
+            }
         }
 
         public async Task Enqueue(object message)
@@ -27,8 +31,9 @@ namespace AzureConstructionsProgressTracker.Common
             var brokeredMessage = new BrokeredMessage(message);
 
             var topicClient = QueueClient.CreateFromConnectionString(_serviceBusNamespaceConnectionString, QueueName);
-            
+
             //TODO ex3: Send message to Queue
+            topicClient.Send(brokeredMessage);
         }
     }
 }
