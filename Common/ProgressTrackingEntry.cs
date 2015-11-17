@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AzureConstructionsProgressTracker.Features.ConstructionProjects;
 
-namespace AzureConstructionsProgressTracker.Features.ProgressTracking
+namespace Common
 {
     public class ProgressTrackingEntry
     {
@@ -23,5 +17,6 @@ namespace AzureConstructionsProgressTracker.Features.ProgressTracking
         public int ConstructionProjectId { get; set; }
 
         public virtual ConstructionProject ConstructionProject { get; set; }
+        public string TumbnailPictureReference { get; set; }
     }
 }

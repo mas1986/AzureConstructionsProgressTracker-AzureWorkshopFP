@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using AzureConstructionsProgressTracker.Models;
+using Common;
 
 namespace AzureConstructionsProgressTracker.Features.ConstructionProjects
 {

@@ -9,15 +9,30 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using AzureConstructionsProgressTracker.Models;
+using AzureConstructionsProgressTracker.Common;
+using Common;
+using Microsoft.WindowsAzure.Storage;
+using Newtonsoft.Json;
 
 namespace AzureConstructionsProgressTracker.Features.ProgressTracking
 {
     public class ProgressTrackingController : Controller
     {
-        private readonly ConstructionsProgressTrackerContext _db = new ConstructionsProgressTrackerContext();
-        private readonly FilesStorageService _filesStorageService = new FilesStorageService();
-        
+        private ConstructionsProgressTrackerContext _db = new ConstructionsProgressTrackerContext();
+        private readonly FilesStorageService _filesStorageService;
+        private readonly ServiceBusManager _serviceBusManager = new ServiceBusManager(ConfigurationManager.ConnectionStrings["AzureWebJobsServiceBus"].ConnectionString);
+
+        public ProgressTrackingController()
+        {
+            CloudStorageAccount cloudStorageAccount;
+            if (CloudStorageAccount.TryParse(
+                ConfigurationManager.ConnectionStrings["AzureStorage"].ConnectionString,
+                out cloudStorageAccount))
+            {
+                _filesStorageService = new FilesStorageService(cloudStorageAccount);
+            }
+        }
+
         // GET: ProgressTracking
         public async Task<ActionResult> Index()
         {
@@ -60,7 +75,7 @@ namespace AzureConstructionsProgressTracker.Features.ProgressTracking
                     if (file != null && file.ContentLength > 0)
                     {
                         var fileName = Path.GetFileName(file.FileName);
-                        var filePath = await _filesStorageService.UploadFile(fileName, file);
+                        var filePath = await _filesStorageService.UploadFile(fileName, file.InputStream);
                         progressTrackingEntry.PictureReference = filePath;
                     }
                 }
@@ -68,6 +83,13 @@ namespace AzureConstructionsProgressTracker.Features.ProgressTracking
                 progressTrackingEntry.EntryDate = DateTime.Now;
                 _db.ProgressTrackingEntries.Add(progressTrackingEntry);
                 await _db.SaveChangesAsync();
+
+                await _serviceBusManager.Enqueue(new ResizePictureMessage
+                {
+                    Id = progressTrackingEntry.Id,
+                    PictureReference = progressTrackingEntry.PictureReference
+                });
+
                 return RedirectToAction("Index");
             }
 

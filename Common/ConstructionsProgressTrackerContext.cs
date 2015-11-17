@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Web;
+﻿using System.Data.Entity;
 
-namespace AzureConstructionsProgressTracker.Models
+namespace Common
 {
     public class ConstructionsProgressTrackerContext : DbContext
     {
@@ -20,8 +16,8 @@ namespace AzureConstructionsProgressTracker.Models
             Database.SetInitializer<ConstructionsProgressTrackerContext>(new DropCreateDatabaseIfModelChanges<ConstructionsProgressTrackerContext>());
         }
 
-        public System.Data.Entity.DbSet<AzureConstructionsProgressTracker.Features.ConstructionProjects.ConstructionProject> ConstructionProjects { get; set; }
+        public System.Data.Entity.DbSet<ConstructionProject> ConstructionProjects { get; set; }
 
-        public System.Data.Entity.DbSet<AzureConstructionsProgressTracker.Features.ProgressTracking.ProgressTrackingEntry> ProgressTrackingEntries { get; set; }
+        public System.Data.Entity.DbSet<ProgressTrackingEntry> ProgressTrackingEntries { get; set; }
     }
 }

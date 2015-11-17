@@ -38,7 +38,10 @@ Kryteria akceptacji:
 git checkout ex-3-start-background-processing
 
 ```
+<<<<<<< HEAD
 Część pierwsza
+=======
+>>>>>>> ex-3-start-background-processing
 
 - Stwórz usługę Service Bus Namespace
 - Zaimplementuj komunikację pomiędzy Web App a Web Job przy pomocy Service Bus. 
